@@ -18,7 +18,10 @@ const state = {};
 // SEARCH CONTROLLER
 const controlSearch = async () => {
     // 1) Get query from view
-    const query = SearchView.getInput();
+    // const query = SearchView.getInput();
+
+    //for testing
+    const query = 'pizza';
     console.log(query);
 
     if (query){
@@ -30,18 +33,29 @@ const controlSearch = async () => {
         SearchView.clearResults();
         renderLoader(elements.searchRes);
 
+        try{
+            //Search for recipes
+            await state.search.getResults();
 
-        //Search for recipes
-        await state.search.getResults();
-
-        //Render results on the UI
-        clearLoader();
-        SearchView.renderResults(state.search.result);
+            //Render results on the UI
+            clearLoader();
+            SearchView.renderResults(state.search.result);
+        } catch(error){
+            alert('Something went wrong!');
+            clearLoader();
+        }
     }
 }
 
 //event handler
-elements.searchForm.addEventListener('submit', e => { 
+// elements.searchForm.addEventListener('submit', e => { 
+//     e.preventDefault();
+//     controlSearch();
+
+// });
+
+//TESTING
+window.addEventListener('load', e => { 
     e.preventDefault();
     controlSearch();
 
@@ -64,7 +78,7 @@ elements.searchResPages.addEventListener('click', e => {
 
 const controlRecipe = async () => {
     //Get id from url 
-    const id = window.location.hash.replace('#', ' ');
+    const id = window.location.hash.replace('#', '');
     console.log(id);
 
     if(id) {
@@ -74,22 +88,35 @@ const controlRecipe = async () => {
      //Create new recipe object
         state.recipe = new Recipe(id);
 
-     //Get recipes data
-        await state.recipe.getRecipe();
+        //testing
+        window.r = state.recipe;
+
+
+        try{
+            //Get recipes data. Returns promise
+            await state.recipe.getRecipe();
+        
+            //Calculate servings and cooking time
+            state.recipe.calcTime();
+            state.recipe.calcServings();
+        
+            //Render recipe
+        
+            console.log(state.recipe);
+        } catch(error){
+            alert('Error processing recipe!');
+
+        }
     
-     //Calculate servings and cooking time
-      state.recipe.calcTime();
-      state.recipe.calcServings();
-
-     //Render recipe
-
-     console.log(state.recipe);
 
 
     }
 }
 
-window.addEventListener('hashchange',controlRecipe);
+//Add different event listeners to the same element
+//Create array
 
+['hashchange', 'load'].forEach(event => window.addEventListener(event, controlRecipe));
 
-
+// window.addEventListener('hashchange',controlRecipe);
+// window.addEventListener('load', controlRecipe);
