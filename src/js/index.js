@@ -18,10 +18,10 @@ const state = {};
 // SEARCH CONTROLLER
 const controlSearch = async () => {
     // 1) Get query from view
-    // const query = SearchView.getInput();
+    const query = SearchView.getInput();
 
     //for testing
-    const query = 'pizza';
+    // const query = 'pizza';
     console.log(query);
 
     if (query){
@@ -47,19 +47,19 @@ const controlSearch = async () => {
     }
 }
 
-//event handler
-// elements.searchForm.addEventListener('submit', e => { 
-//     e.preventDefault();
-//     controlSearch();
-
-// });
-
-//TESTING
-window.addEventListener('load', e => { 
+// event handler
+elements.searchForm.addEventListener('submit', e => { 
     e.preventDefault();
     controlSearch();
 
 });
+
+//TESTING
+// window.addEventListener('load', e => { 
+//     e.preventDefault();
+//     controlSearch();
+
+// });
 
 //event delegation
 //closest method
@@ -89,12 +89,13 @@ const controlRecipe = async () => {
         state.recipe = new Recipe(id);
 
         //testing
-        window.r = state.recipe;
+        // window.r = state.recipe;
 
 
         try{
-            //Get recipes data. Returns promise
+            //Get recipes data and parse ingredients. Returns promise
             await state.recipe.getRecipe();
+            state.recipe.parseIngredients();
         
             //Calculate servings and cooking time
             state.recipe.calcTime();
