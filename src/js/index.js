@@ -3,7 +3,11 @@
 import Search from './models/Search';
 import Recipe from './models/Recipe';
 import * as SearchView from './views/searchView';
+import * as recipeView from './views/recipeView';
+import * as listView from './views/listView'
 import {elements, renderLoader, clearLoader} from './views/base';
+import List from './models/List';
+
 
 
 // global state of the app
@@ -83,6 +87,15 @@ const controlRecipe = async () => {
 
     if(id) {
      // prepare the UI for changes 
+       recipeView.clearRecipe();
+       renderLoader(elements.recipe);
+
+
+    //Highlight selected search item
+        
+    if(state.search){
+        SearchView.highLightSelected(id);
+    }
 
 
      //Create new recipe object
@@ -95,6 +108,7 @@ const controlRecipe = async () => {
         try{
             //Get recipes data and parse ingredients. Returns promise
             await state.recipe.getRecipe();
+            // console.log(state.recipe.ingredients);
             state.recipe.parseIngredients();
         
             //Calculate servings and cooking time
@@ -102,8 +116,10 @@ const controlRecipe = async () => {
             state.recipe.calcServings();
         
             //Render recipe
+            clearLoader();
+            recipeView.renderRecipe(state.recipe);
         
-            console.log(state.recipe);
+            // console.log(state.recipe);
         } catch(error){
             alert('Error processing recipe!');
 
@@ -112,6 +128,22 @@ const controlRecipe = async () => {
 
 
     }
+};
+
+
+//LIST CONTROLLER 
+
+const controlList = () => {
+    // Create a new list if there is none yet
+    if(!state.list) state.list = new List();
+
+    //Add ingredients to the list and user interface
+
+    state.recipe.ingredients.forEach(el => {
+        const item = state.list.addItem(el.count, el.unit, el.ingredient);
+        listView.renderItem(item);
+    })
+
 }
 
 //Add different event listeners to the same element
@@ -121,3 +153,25 @@ const controlRecipe = async () => {
 
 // window.addEventListener('hashchange',controlRecipe);
 // window.addEventListener('load', controlRecipe);
+
+//Handling recipe button clicks
+elements.recipe.addEventListener('click', e => {
+
+    if(e.target.matches('.btn-decrease, .btn-decrease *')){
+        //Decrease button is clicked
+        if(state.recipe.servings > 1){
+            state.recipe.updateServings('dec');
+            recipeView.updateServingsIngredients(state.recipe);
+        }
+    } else if(e.target.matches('.btn-increase, .btn-increase *')){
+        //Increase button is clicked
+        state.recipe.updateServings('inc');
+        recipeView.updateServingsIngredients(state.recipe);
+    } else if(e.target.matches('.recipe__btn--add, recipe__btn--add *')){
+        controlList();
+    }
+
+    // console.log(state.recipe);
+});
+
+window.l = new List();
