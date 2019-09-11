@@ -17,6 +17,7 @@ import List from './models/List';
 // liked recipes
 
 const state = {};
+window.state = state;
 
 
 // SEARCH CONTROLLER
@@ -153,6 +154,25 @@ const controlList = () => {
 
 // window.addEventListener('hashchange',controlRecipe);
 // window.addEventListener('load', controlRecipe);
+
+//Handle delete and update list item events
+elements.shopping.addEventListener('click', e =>{
+    //retrieve id from closest element
+    const id = e.target.closest('.shoppig__item').dataset.itemid;
+
+    //handle delete button
+    if(e.target.matches('.shopping__delete, .shopping__delete *')){
+        //Delete from state
+        state.deleteItem(id);
+
+        //Delete from UI
+        listView.deleteItem(id);
+    }
+
+})
+
+
+
 
 //Handling recipe button clicks
 elements.recipe.addEventListener('click', e => {
