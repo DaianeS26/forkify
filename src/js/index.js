@@ -132,6 +132,8 @@ const controlRecipe = async () => {
 };
 
 
+
+
 //LIST CONTROLLER 
 
 const controlList = () => {
@@ -143,9 +145,18 @@ const controlList = () => {
     state.recipe.ingredients.forEach(el => {
         const item = state.list.addItem(el.count, el.unit, el.ingredient);
         listView.renderItem(item);
-    })
+    });
 
-}
+};
+
+//LIKES CONTROLLER 
+
+
+
+
+
+
+//EVENT LISTENERS
 
 //Add different event listeners to the same element
 //Create array
@@ -155,24 +166,28 @@ const controlList = () => {
 // window.addEventListener('hashchange',controlRecipe);
 // window.addEventListener('load', controlRecipe);
 
+
 //Handle delete and update list item events
 elements.shopping.addEventListener('click', e =>{
     //retrieve id from closest element
-    const id = e.target.closest('.shoppig__item').dataset.itemid;
+    const id = e.target.closest('.shopping__item').dataset.itemid;
 
     //handle delete button
     if(e.target.matches('.shopping__delete, .shopping__delete *')){
         //Delete from state
-        state.deleteItem(id);
+        state.list.deleteItem(id);
 
         //Delete from UI
         listView.deleteItem(id);
+
+        //handle count update
+    } else if (e.target.matches('.shopping__count-value')){
+        const val = parseFloat(e.target.value, 10);
+        state.list.updateCount(id, val);
+
     }
 
-})
-
-
-
+});
 
 //Handling recipe button clicks
 elements.recipe.addEventListener('click', e => {
@@ -188,6 +203,8 @@ elements.recipe.addEventListener('click', e => {
         state.recipe.updateServings('inc');
         recipeView.updateServingsIngredients(state.recipe);
     } else if(e.target.matches('.recipe__btn--add, recipe__btn--add *')){
+       //Add ingredients to shopping list
+       
         controlList();
     }
 
@@ -195,3 +212,4 @@ elements.recipe.addEventListener('click', e => {
 });
 
 window.l = new List();
+
