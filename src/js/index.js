@@ -28,7 +28,7 @@ const controlSearch = async () => {
 
     //for testing
     // const query = 'pizza';
-    console.log(query);
+    // console.log(query);
 
     if (query){
         //New search object and add to state
